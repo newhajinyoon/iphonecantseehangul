@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>아이폰 왕따</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 400px;
+        }
+        textarea, input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>아이폰은 못읽는 한글 만드는 기계</h2>
+        <label for="input">한글 입력:</label>
+        <textarea id="input" rows="4" placeholder="한글을 입력하세요"></textarea>
+
+        <button onclick="decomposeHangul()">난독화</button>
+
+        <label for="output">결과:</label>
+        <textarea id="output" rows="4" readonly placeholder="결과가 여기에 표시됩니다"></textarea>
+        <button onclick="copyText()">복사하기</button>
+
+    </div>
+
+    <script>
+        function getConstantVowel(kor) {
+            const f = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ',
+                       'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ',
+                       'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+            const s = ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ',
+                       'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ',
+                       'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ'];
+            const t = ['', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ',
+                       'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ',
+                       'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ',
+                       'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+
+            const ga = 44032;
+            let uni = kor.charCodeAt(0);
+
+            if (uni < ga || uni > 55203) {
+                return ''; // 한글이 아닌 경우 빈 값 반환
+            }
+
+            uni = uni - ga;
+
+            let fn = parseInt(uni / 588);
+            let sn = parseInt((uni - (fn * 588)) / 28);
+            let tn = parseInt(uni % 28);
+
+            // 초성 변환 처리
+            let initial = f[fn];
+            if (initial === 'ㄱ') initial = 'ᄀ';
+            if (initial === 'ㄲ') initial = 'ᄁ';
+            if (initial === 'ㄴ') initial = 'ᄂ';
+            if (initial === 'ㄷ') initial = 'ᄃ';
+            if (initial === 'ㄸ') initial = 'ᄄ';
+            if (initial === 'ㄹ') initial = 'ᄙ';
+            if (initial === 'ㅁ') initial = 'ᄆ';
+            if (initial === 'ㅂ') initial = 'ᄇ';
+            if (initial === 'ㅃ') initial = 'ᄈ';
+            if (initial === 'ㅅ') initial = 'ᄾ';
+            if (initial === 'ㅆ') initial = 'ᄴ';
+            if (initial === 'ㅇ') initial = 'ᅌ';
+            if (initial === 'ㅈ') initial = 'ᅐ';
+            if (initial === 'ㅉ') initial = 'ᅑ';
+            if (initial === 'ㅊ') initial = 'ᅔ';
+            if (initial === 'ㅋ') initial = 'ᄏ';
+            if (initial === 'ㅌ') initial = 'ᄐ';
+            if (initial === 'ㅍ') initial = 'ᄑ';
+            if (initial === 'ㅎ') initial = 'ᅙ';
+
+
+            // 중성 변환 처리
+            let medial = s[sn]
+            if (medial === 'ㅏ') medial = 'ퟅ';
+            if (medial === 'ㅐ') medial = 'ᅢ';
+            if (medial === 'ㅑ') medial = 'ᅣ';
+            if (medial === 'ㅒ') medial = 'ힿ';
+            if (medial === 'ㅓ') medial = 'ᅥ';
+            if (medial === 'ㅔ') medial = 'ퟆ';
+            if (medial === 'ㅕ') medial = 'ᅧ';
+            if (medial === 'ㅖ') medial = 'ᅨ';
+            if (medial === 'ㅗ') medial = 'ᆂ';
+            if (medial === 'ㅘ') medial = 'ᅪ';
+            if (medial === 'ㅙ') medial = 'ᅫ';
+            if (medial === 'ㅚ') medial = 'ᅬ';
+            if (medial === 'ㅛ') medial = 'ᅭ';
+            if (medial === 'ㅜ') medial = 'ᆕ';
+            if (medial === 'ㅝ') medial = 'ᅯ';
+            if (medial === 'ㅞ') medial = 'ᅰ';
+            if (medial === 'ㅟ') medial = 'ힶ';
+            if (medial === 'ㅠ') medial = 'ᅲ';
+            if (medial === 'ㅡ') medial = 'ᆖ';
+            if (medial === 'ㅢ') medial = 'ᆜ';
+            if (medial === 'ㅣ') medial = 'ᅵ';
+
+            // 종성 변환 처리
+            let final = t[tn]
+            if (final === 'ㄱ') final = 'ᆨ';
+            if (final === 'ㄲ') final = 'ᆩ';
+            if (final === 'ㄳ') final = 'ᆪ';
+            if (final === 'ㄴ') final = 'ᆫ';
+            if (final === 'ㄵ') final = 'ᆬ';
+            if (final === 'ㄶ') final = 'ᆭ';
+            if (final === 'ㄷ') final = 'ᆮ';
+            if (final === 'ㄹ') final = 'ᆯ';
+            if (final === 'ㄺ') final = 'ᆰ';
+            if (final === 'ㄻ') final = 'ᆱ';
+            if (final === 'ㄼ') final = 'ᆲ';
+            if (final === 'ㄽ') final = 'ᆳ';
+            if (final === 'ㄾ') final = 'ᆴ';
+            if (final === 'ㄿ') final = 'ᆵ';
+            if (final === 'ㅀ') final = 'ᆶ';
+            if (final === 'ㅁ') final = 'ᆷ';
+            if (final === 'ㅂ') final = 'ᆸ';
+            if (final === 'ㅄ') final = 'ᆹ';
+            if (final === 'ㅅ') final = 'ᇫ';
+            if (final === 'ㅆ') final = 'ᆻ';
+            if (final === 'ㅇ') final = 'ᇰ';
+            if (final === 'ㅈ') final = 'ᆽ';
+            if (final === 'ㅊ') final = 'ᆾ';
+            if (final === 'ㅋ') final = 'ᆿ';
+            if (final === 'ㅌ') final = 'ᇀ';
+            if (final === 'ㅍ') final = 'ᇁ';
+            if (final === 'ㅎ') final = 'ᇹ';
+
+
+
+            return initial + medial + (final || '');
+        }
+
+        function decomposeHangul() {
+            let input = document.getElementById('input').value;
+            const output = document.getElementById('output');
+
+            // 띄어쓰기를 [/]/로 바꾸기
+            input = input.replace(/\s/g, '[/]');
+
+            let result = '';
+
+            for (let char of input) {
+                if (char.trim() === '') continue; // 공백 무시
+
+                const decomposed = getConstantVowel(char);
+                result += decomposed || char; // 한글 외의 문자는 그대로 추가
+            }
+
+            // 최종 출력 전에 [/]/를 띄어쓰기로 바꾸기
+            result = result.replace(/\[\/\]/g, ' ');
+
+            output.value = result;
+        }
+
+        function copyText() {
+            var copyText = document.getElementById("output");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); // For mobile devices
+            document.execCommand("copy");
+            alert("내용이 복사되었습니다!");
+        }
+    </script>
+</body>
+</html>
